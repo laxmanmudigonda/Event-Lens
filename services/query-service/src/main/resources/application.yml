@@ -1,0 +1,32 @@
+server.port: ${SERVER_PORT:8083}
+spring:
+  application.name: query-service
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/eventlens}
+    username: ${DATABASE_USERNAME:eventlens}
+    password: ${DATABASE_PASSWORD:eventlens_dev}
+  jpa:
+    hibernate.ddl-auto: validate
+    open-in-view: false
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties.spring.json.trusted.packages: dev.eventlens.model
+    producer:
+      acks: all
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+management:
+  endpoints.web.exposure.include: health,info,metrics
+  endpoint.health.probes.enabled: true
+eventlens:
+  opensearch.url: ${OPENSEARCH_URL:http://localhost:9200}
+  kafka:
+    raw-topic: eventlens.logs.raw
+    dead-letter-topic: eventlens.logs.dead-letter
+    consumer-group: eventlens-indexers
+  alerts.interval-ms: ${ALERT_INTERVAL_MS:60000}
+

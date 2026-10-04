@@ -1,0 +1,35 @@
+server:
+  port: ${SERVER_PORT:8081}
+  max-http-request-header-size: 32KB
+spring:
+  application.name: ingestion-service
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/eventlens}
+    username: ${DATABASE_USERNAME:eventlens}
+    password: ${DATABASE_PASSWORD:eventlens_dev}
+  jpa:
+    hibernate.ddl-auto: validate
+    open-in-view: false
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      acks: all
+      retries: 10
+      properties:
+        enable.idempotence: true
+        max.in.flight.requests.per.connection: 5
+        delivery.timeout.ms: 120000
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    admin.fail-fast: true
+  servlet.multipart.max-request-size: 10MB
+management:
+  endpoints.web.exposure.include: health,info,metrics,prometheus
+  endpoint.health.probes.enabled: true
+eventlens:
+  kafka:
+    raw-topic: eventlens.logs.raw
+    dead-letter-topic: eventlens.logs.dead-letter
+    partitions: 6
+  rate-limit-per-minute: ${RATE_LIMIT_PER_MINUTE:1000}
+

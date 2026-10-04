@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: eventlens
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: eventlens-config
+  namespace: eventlens
+data:
+  KAFKA_BOOTSTRAP_SERVERS: kafka.external.svc.cluster.local:9092
+  OPENSEARCH_URL: http://opensearch.external.svc.cluster.local:9200
+  DATABASE_URL: jdbc:postgresql://postgres.external.svc.cluster.local:5432/eventlens
+  DATABASE_USERNAME: eventlens
+  RATE_LIMIT_PER_MINUTE: "10000"
+---
+# Replace this demo value through your secret manager; do not commit real credentials.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: eventlens-secrets
+  namespace: eventlens
+type: Opaque
+stringData:
+  DATABASE_PASSWORD: replace-me
+

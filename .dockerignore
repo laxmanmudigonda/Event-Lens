@@ -1,0 +1,9 @@
+.git
+.m2
+.docker-config
+**/target
+frontend/node_modules
+frontend/dist
+.env
+*.log
+
